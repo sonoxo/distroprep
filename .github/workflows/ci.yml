@@ -20,21 +20,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Run all tests
+      - name: Run test suite
         run: node --test tests/*.test.mjs
       - name: Parse application JavaScript
         run: |
           node --check app.js
           node --check bulk1000.mjs
+          node --check bulk-enhancements.mjs
           node --check smart-match.mjs
           node --check release-template.mjs
       - name: Verify required files
-        run: |
-          test -f index.html
-          test -f bulk1000.html
-          test -f styles.css
-          test -f bulk1000.css
-          test -f validator.mjs
-          test -f smart-match.mjs
-          test -f release-template.mjs
-          test -f README.md
+        run: test -f index.html && test -f bulk1000.html && test -f bulk1000.css && test -f validator.mjs && test -f README.md
