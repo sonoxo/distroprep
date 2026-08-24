@@ -27,11 +27,18 @@ test('matching stays one artwork per audio file', () => {
 
 test('folder identity can match generic master and cover filenames', () => {
   const rows = smartMatchBatch(
-    [f('master.wav', 'Masters/Night Drive/master.wav')],
-    [f('cover.jpg', 'Artwork/Night Drive/cover.jpg')],
+    [
+      f('master.wav', 'Masters/Night Drive/master.wav'),
+      f('master.wav', 'Masters/Cold Summer/master.wav'),
+    ],
+    [
+      f('cover.jpg', 'Artwork/Cold Summer/cover.jpg'),
+      f('cover.jpg', 'Artwork/Night Drive/cover.jpg'),
+    ],
   );
   assert.equal(rows[0].matched, true);
-  assert.equal(rows[0].artwork.name, 'cover.jpg');
+  assert.equal(rows[0].artwork.webkitRelativePath, 'Artwork/Night Drive/cover.jpg');
+  assert.equal(rows[1].artwork.webkitRelativePath, 'Artwork/Cold Summer/cover.jpg');
 });
 
 test('1000-item batch resolves exact normalized pairs', () => {
