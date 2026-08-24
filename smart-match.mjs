@@ -91,7 +91,13 @@ export function fingerprint(fileLike = {}) {
 export function pairScore(audio, artwork) {
   const a = fingerprint(audio);
   const b = fingerprint(artwork);
-  if (!a.clean || !b.clean) return { score: 0, reason: 'No usable filename identity' };
+  if (!a.clean || !b.clean) {
+    const folderOnly = tokenScore(a.folderTokens, b.folderTokens);
+    const numberOnly = a.trackNumber !== null && a.trackNumber === b.trackNumber ? 1 : 0;
+    const score = Math.min(1, (folderOnly * 0.82) + (numberOnly * 0.08));
+    if (score >= 0.58) return { score, reason: folderOnly >= 0.99 ? 'Matching release folder' : 'Folder-name similarity' };
+    return { score, reason: 'No usable filename identity' };
+  }
   if (a.clean === b.clean) return { score: 1, reason: 'Exact normalized filename' };
 
   const nameTokens = tokenScore(a.nameTokens, b.nameTokens);
