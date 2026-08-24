@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0b12" />
+  <meta name="description" content="DistroPrep Personal — prepare, validate, pair, and export music releases before submitting them through DistroKid." />
+  <title>DistroPrep Personal</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="DistroPrep home"><span class="brand-mark">DP</span><span><strong>DistroPrep</strong><small>Personal Release Lab</small></span></a>
+    <nav>
+      <button class="nav-button active" data-tab="builder">Release Builder</button>
+      <button class="nav-button" data-tab="bulk">Bulk Singles</button>
+      <a class="ghost-link" href="https://distrokid.com/new/" target="_blank" rel="noopener noreferrer">Open DistroKid ↗</a>
+    </nav>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">FOR INDEPENDENT ARTISTS • LOCAL-FIRST</span>
+        <h1>Build the release package.<br><span>Keep the music yours.</span></h1>
+        <p>DistroPrep helps musicians pair masters with cover art, mirror the current DistroKid upload fields, catch common delivery problems, and export clean release manifests before the final submission.</p>
+        <div class="hero-actions">
+          <button class="primary" data-scroll="#workspace">Start a release</button>
+          <button class="secondary" id="load-demo">Load demo</button>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <div class="meter-row"><span>🎧 Audio</span><b>WAV • FLAC • MP3 • M4A • AIFF • WMA</b></div>
+        <div class="meter-row"><span>🖼️ Artwork</span><b>3000×3000 JPG target</b></div>
+        <div class="meter-row"><span>🔒 Privacy</span><b>Files stay in your browser</b></div>
+        <div class="meter-row"><span>🚀 Delivery</span><b>Manual final submit to DistroKid</b></div>
+      </aside>
+    </section>
+
+    <section class="notice">
+      <strong>Personal-account mode:</strong> DistroPrep does not ask for or store DistroKid credentials and does not auto-submit the DistroKid website. It prepares your release locally, then opens the official upload page for your review and submission.
+    </section>
+
+    <section id="workspace" class="workspace">
+      <div id="builder-tab" class="tab-panel active">
+        <div class="section-heading"><div><span class="eyebrow">01 • RELEASE</span><h2>Release Builder</h2></div><div class="status-chip" id="release-status">Needs setup</div></div>
+
+        <div class="grid two">
+          <article class="panel">
+            <h3>Release details</h3>
+            <div class="form-grid">
+              <label class="span-2">Services <input id="services" value="All available services" /></label>
+              <label>Previously released?
+                <select id="previously-released"><option value="no">No</option><option value="yes">Yes</option></select>
+              </label>
+              <label>Original release date <input id="original-date" type="date" /></label>
+              <label class="span-2">Artist / band name <input id="artist-name" placeholder="Your artist name" /></label>
+              <label>Release date <input id="release-date" type="date" /></label>
+              <label>Record label <input id="record-label" placeholder="Optional / plan dependent" /></label>
+              <label class="span-2">Album / EP title <input id="release-title" placeholder="Required for multi-track releases" /></label>
+              <label>Language <input id="language" value="English" /></label>
+              <label>Primary genre <input id="primary-genre" placeholder="Hip-Hop/Rap" /></label>
+              <label>Secondary genre <input id="secondary-genre" placeholder="Optional" /></label>
+              <label>Album price <input id="album-price" placeholder="Optional / plan dependent" /></label>
+            </div>
+          </article>
+
+          <article class="panel">
+            <h3>Artist mapping & Apple credits</h3>
+            <div class="form-grid">
+              <label class="span-2">Spotify artist URI / URL <input id="spotify-artist" placeholder="Optional existing profile" /></label>
+              <label class="span-2">Apple Music artist URL <input id="apple-artist" placeholder="Optional existing profile" /></label>
+              <label class="span-2">YouTube Music artist URL <input id="youtube-artist" placeholder="Optional existing profile" /></label>
+              <label>Performer credit <input id="performer-credit" placeholder="Required for Apple delivery" /></label>
+              <label>Producer credit <input id="producer-credit" placeholder="Required for Apple delivery" /></label>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel upload-panel">
+          <div class="panel-title-row"><div><h3>Album cover</h3><p>JPG • minimum 1000×1000 • square preferred • 3000×3000 recommended</p></div><span id="artwork-badge" class="mini-badge">No artwork</span></div>
+          <label class="dropzone" id="art-dropzone"><input id="artwork-input" type="file" accept="image/jpeg,image/png" /><span class="drop-icon">＋</span><strong>Choose cover artwork</strong><small>One image for this release</small></label>
+          <div id="artwork-preview" class="artwork-preview hidden"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title-row"><div><h3>Tracks</h3><p>Add one master for a single or multiple masters for an EP/album.</p></div><label class="file-button">Add audio<input id="audio-input" type="file" multiple accept="audio/*,.wav,.flac,.mp3,.m4a,.aiff,.aif,.wma" /></label></div>
+          <div id="track-list" class="track-list empty-state"><p>Drop in your mastered audio files to start building track metadata.</p></div>
+        </article>
+
+        <article class="panel">
+          <h3>Final release check</h3>
+          <div id="validation-summary" class="validation-summary"><p>Add release metadata, artwork, and audio to run validation.</p></div>
+          <div class="checklist-grid">
+            <label><input type="checkbox" id="rights-check" /> I have the rights/permission needed to distribute this audio and artwork.</label>
+            <label><input type="checkbox" id="spelling-check" /> I reviewed artist names, titles, credits, and capitalization.</label>
+            <label><input type="checkbox" id="stores-check" /> I will review store selections and optional DistroKid extras before submitting.</label>
+          </div>
+        </article>
+
+        <div class="action-bar">
+          <button class="secondary" id="save-draft">Save metadata draft</button>
+          <button class="secondary" id="export-json">Export JSON</button>
+          <button class="secondary" id="export-csv">Export CSV</button>
+          <button class="secondary" id="copy-manifest">Copy manifest</button>
+          <a class="primary button-link" href="https://distrokid.com/new/" target="_blank" rel="noopener noreferrer">Open official DistroKid upload ↗</a>
+        </div>
+      </div>
+
+      <div id="bulk-tab" class="tab-panel">
+        <div class="section-heading"><div><span class="eyebrow">02 • BULK</span><h2>Bulk Singles Queue</h2></div><div class="status-chip" id="bulk-status">0 matched</div></div>
+        <div class="grid two">
+          <article class="panel">
+            <h3>Defaults for every single</h3>
+            <div class="form-grid">
+              <label class="span-2">Artist / band name <input id="bulk-artist" placeholder="Artist name" /></label>
+              <label>Record label <input id="bulk-label" /></label>
+              <label>Release date <input id="bulk-date" type="date" /></label>
+              <label>Language <input id="bulk-language" value="English" /></label>
+              <label>Primary genre <input id="bulk-genre" /></label>
+              <label>Songwriter real name(s) <input id="bulk-songwriters" placeholder="Legal names" /></label>
+              <label>Producer credit <input id="bulk-producer" /></label>
+            </div>
+          </article>
+          <article class="panel">
+            <h3>Filename matching</h3>
+            <p class="muted">DistroPrep pairs audio and art by normalized filename. Example: <code>01 Neon Rain.wav</code> matches <code>Neon Rain Cover.jpg</code>.</p>
+            <div class="tip-list"><span>✓ track numbers ignored</span><span>✓ “cover” / “artwork” suffixes ignored</span><span>✓ spaces, underscores, and hyphens normalized</span></div>
+          </article>
+        </div>
+
+        <div class="grid two">
+          <article class="panel upload-panel"><h3>1. Add masters</h3><label class="dropzone"><input id="bulk-audio-input" type="file" multiple accept="audio/*,.wav,.flac,.mp3,.m4a,.aiff,.aif,.wma" /><span class="drop-icon">🎵</span><strong>Select multiple audio files</strong></label></article>
+          <article class="panel upload-panel"><h3>2. Add covers</h3><label class="dropzone"><input id="bulk-art-input" type="file" multiple accept="image/jpeg,image/png" /><span class="drop-icon">🖼️</span><strong>Select multiple cover files</strong></label></article>
+        </div>
+
+        <article class="panel">
+          <div class="panel-title-row"><div><h3>Matched release queue</h3><p>Each row becomes one prepared single manifest.</p></div><button class="secondary" id="bulk-export">Export queue JSON</button></div>
+          <div id="bulk-list" class="bulk-list empty-state"><p>Add audio and artwork to build the queue.</p></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer><strong>DistroPrep Personal</strong><span>Independent release preparation • No DistroKid credentials stored</span><a href="https://github.com/sonoxo/distroprep" target="_blank" rel="noopener noreferrer">GitHub ↗</a></footer>
+
+  <template id="track-template">
+    <article class="track-card">
+      <div class="track-head"><div><span class="track-number"></span><strong class="track-filename"></strong><small class="track-filemeta"></small></div><button class="icon-button remove-track" title="Remove track">×</button></div>
+      <div class="form-grid">
+        <label class="span-2">Song title <input data-field="title" /></label>
+        <label>Additional artist role <select data-field="collabRole"><option value="">None</option><option>Featured artist</option><option>Remixer</option><option>Additional primary artist</option></select></label>
+        <label>Additional artist name <input data-field="collabName" /></label>
+        <label>Version info <input data-field="version" placeholder="Live, Acoustic, Remix…" /></label>
+        <label>Existing ISRC <input data-field="isrc" placeholder="Optional / plan dependent" /></label>
+        <label>Songwriter type <select data-field="songwriterType"><option value="original">Original song</option><option value="cover">Cover song</option></select></label>
+        <label>Songwriter(s) real name <input data-field="songwriters" /></label>
+        <label class="cover-field hidden">Original artist <input data-field="originalArtist" /></label>
+        <label class="cover-field hidden">Original song title <input data-field="originalTitle" /></label>
+        <label>Explicit lyrics? <select data-field="explicit"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Radio edit? <select data-field="radioEdit"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Instrumental? <select data-field="instrumental"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Apple Digital Master? <select data-field="appleDigitalMaster"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Preview start <input data-field="previewStart" placeholder="e.g. 0:42" /></label>
+        <label>Track price <select data-field="trackPrice"><option value="">Default</option><option>$0.69</option><option>$0.99</option><option>$1.29</option></select></label>
+      </div>
+      <div class="file-validation"></div>
+    </article>
+  </template>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
