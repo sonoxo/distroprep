@@ -2,14 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { pairScore, smartMatchBatch } from '../smart-match.mjs';
 
-const f = (name, path = '') => ({ name, size: 12, webkitRelativePath: path });
+const f = (name, path = '') => ({ name, size: 12, _distroprepPath: path });
 
 test('exact normalized title matches cover suffix', () => {
   const result = pairScore(f('01 Neon Rain.wav'), f('Neon Rain Cover.jpg'));
   assert.equal(result.score, 1);
 });
 
-test('smart matcher handles punctuation and artwork words', () => {
+test('smart matcher prioritizes title metadata despite punctuation', () => {
   const rows = smartMatchBatch(
     [f('Cold_Summer FINAL.wav'), f('Money Talk (Master).flac')],
     [f('money-talk artwork.jpg'), f('Cold Summer cover.jpg')],
@@ -17,6 +17,11 @@ test('smart matcher handles punctuation and artwork words', () => {
   assert.equal(rows[0].artwork.name, 'Cold Summer cover.jpg');
   assert.equal(rows[1].artwork.name, 'money-talk artwork.jpg');
   assert.ok(rows.every((row) => row.matched));
+});
+
+test('unrelated artwork title is not force-matched', () => {
+  const rows = smartMatchBatch([f('Neon Rain.wav')], [f('Completely Different Cover.jpg'), f('Another Picture.jpg')]);
+  assert.equal(rows[0].matched, false);
 });
 
 test('matching stays one artwork per audio file', () => {
@@ -27,18 +32,11 @@ test('matching stays one artwork per audio file', () => {
 
 test('folder identity can match generic master and cover filenames', () => {
   const rows = smartMatchBatch(
-    [
-      f('master.wav', 'Masters/Night Drive/master.wav'),
-      f('master.wav', 'Masters/Cold Summer/master.wav'),
-    ],
-    [
-      f('cover.jpg', 'Artwork/Cold Summer/cover.jpg'),
-      f('cover.jpg', 'Artwork/Night Drive/cover.jpg'),
-    ],
+    [f('master.wav', 'Masters/Night Drive/master.wav'), f('master.wav', 'Masters/Cold Summer/master.wav')],
+    [f('cover.jpg', 'Artwork/Cold Summer/cover.jpg'), f('cover.jpg', 'Artwork/Night Drive/cover.jpg')],
   );
-  assert.equal(rows[0].matched, true);
-  assert.equal(rows[0].artwork.webkitRelativePath, 'Artwork/Night Drive/cover.jpg');
-  assert.equal(rows[1].artwork.webkitRelativePath, 'Artwork/Cold Summer/cover.jpg');
+  assert.equal(rows[0].artwork._distroprepPath, 'Artwork/Night Drive/cover.jpg');
+  assert.equal(rows[1].artwork._distroprepPath, 'Artwork/Cold Summer/cover.jpg');
 });
 
 test('1000-item batch resolves exact normalized pairs', () => {
