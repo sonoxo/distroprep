@@ -27,7 +27,8 @@ jobs:
           node --check app.js
           node --check bulk1000.mjs
           node --check bulk-enhancements.mjs
+          node --check handoff.mjs
           node --check smart-match.mjs
           node --check release-template.mjs
       - name: Verify required files
-        run: test -f index.html && test -f bulk1000.html && test -f bulk1000.css && test -f validator.mjs && test -f README.md
+        run: test -f index.html && test -f bulk1000.html && test -f bulk1000.css && test -f validator.mjs && test -f handoff.mjs && test -f README.md
