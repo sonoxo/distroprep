@@ -60,6 +60,14 @@ function sendFiles(files, targetInput) {
   targetInput.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+function syncPicker(selector, kind) {
+  const input = $(selector);
+  if (!input) return;
+  input.addEventListener('change', () => {
+    dropped[kind] = unique([...(input.files || [])]).slice(0, 1000);
+  });
+}
+
 function wireDropZone(zoneSelector, targetSelector, kind) {
   const zone = $(zoneSelector);
   const target = $(targetSelector);
@@ -105,6 +113,11 @@ function wireDatePickers() {
   });
 }
 
+syncPicker('#audio-folder-input', 'audio');
+syncPicker('#audio-files-input', 'audio');
+syncPicker('#art-folder-input', 'art');
+syncPicker('#art-files-input', 'art');
 wireDropZone('#audio-drop-zone', '#audio-files-input', 'audio');
 wireDropZone('#art-drop-zone', '#art-files-input', 'art');
 wireDatePickers();
+$('#clear-batch')?.addEventListener('click', () => { dropped.audio = []; dropped.art = []; });
