@@ -1,195 +1,334 @@
 <div align="center">
 
-# 🎛️ DISTROPREP PERSONAL
-### **From studio folder → release-ready package.**
+# 🎛️⚡ DISTROPREP PERSONAL
+## **Drop the folder. Match the covers. Keep releasing.**
 
-**A local-first release preparation workspace for independent musicians using DistroKid.**
+### A local-first release-prep cockpit for independent musicians using DistroKid.
 
-[![Personal Account Mode](https://img.shields.io/badge/mode-personal%20accounts-b8ff2c?style=for-the-badge&labelColor=11111a)](#-personal-account-mode)
-[![No Credentials Stored](https://img.shields.io/badge/privacy-no%20credentials%20stored-8c5cff?style=for-the-badge&labelColor=11111a)](#-privacy-first)
-[![Tests](https://img.shields.io/badge/tests-node%20built--in-7df5b2?style=for-the-badge&labelColor=11111a)](#-development)
-[![License: MIT](https://img.shields.io/badge/license-MIT-f7f4ff?style=for-the-badge&labelColor=11111a)](LICENSE)
+[![1,000 Song Mode](https://img.shields.io/badge/BATCH-1%2C000%20SONGS-b8ff2c?style=for-the-badge&labelColor=11111a)](bulk1000.html)
+[![Previous Release Metadata](https://img.shields.io/badge/METADATA-INHERIT%20PREVIOUS-8c5cff?style=for-the-badge&labelColor=11111a)](#-previous-release-memory)
+[![Local Smart Match](https://img.shields.io/badge/ART-SMART%20MATCH-7df5b2?style=for-the-badge&labelColor=11111a)](#-smart-artwork-matching)
+[![Personal Account Mode](https://img.shields.io/badge/MODE-PERSONAL%20ACCOUNTS-f7f4ff?style=for-the-badge&labelColor=11111a)](#-personal-account-mode)
+[![License: MIT](https://img.shields.io/badge/LICENSE-MIT-f7f4ff?style=for-the-badge&labelColor=11111a)](LICENSE)
 
-**🎵 Masters • 🖼️ Cover art • 🧾 Metadata • ✅ Validation • 📦 Release manifests**
+**🎵 Masters • 🖼️ Cover Art • 🧬 Previous Metadata • ✨ Smart Matching • ✅ Validation • 📦 JSON/CSV**
+
+> **Built for artists with catalogs — not just one upload at a time.**
 
 </div>
 
 ---
 
-## ⚡ Why DistroPrep?
+## 🔥 The musician problem
 
-Finishing the song is creative. Preparing the release is admin.
+You already made the records.
 
-DistroPrep keeps that admin from wrecking your momentum.
+The part that burns time is everything after the bounce:
 
-Drop in your masters and artwork, enter the release information once, catch common DistroKid formatting problems before upload, then keep a clean JSON/CSV manifest beside your music. When the package is ready, DistroPrep opens the official DistroKid upload page for your final review and submission.
+**find the master → find the right cover → retype the same artist info → retype the same label → retype the same credits → check dimensions → repeat.**
 
-> **Built for musicians who would rather spend the night making records than retyping metadata.**
+DistroPrep turns that repetitive release admin into a catalog workflow.
+
+```text
+STUDIO FOLDER
+     │
+     ├── 🎵 up to 1,000 masters
+     ├── 🖼️ up to 1,000 covers
+     │
+     ▼
+┌───────────────────────────────────────────────┐
+│              DISTROPREP PERSONAL              │
+│                                               │
+│  🧬 inherit previous-release metadata         │
+│  ✨ smart-match song ↔ artwork                │
+│  ✅ validate masters + cover dimensions       │
+│  👀 isolate anything that needs review        │
+│  📦 export the whole release queue            │
+└───────────────────────────────────────────────┘
+     │
+     ▼
+OFFICIAL DISTROKID UPLOAD
+final review + submission by the account owner
+```
 
 ---
 
-## 🎚️ What it does
+# ⚡ 1,000 Song Mode
 
-### Release Builder
+The dedicated [`bulk1000.html`](bulk1000.html) workspace is designed for personal catalogs where the release metadata is mostly the same from song to song.
 
-Build a single, EP, or album using a field order designed around the current DistroKid upload workflow:
+### Load the entire catalog in two moves
 
-- Services
-- Number of songs
-- Previously released / original release date
-- Artist / band name
-- Existing Spotify / Apple Music / YouTube Music artist mapping
-- Release date
-- Record label
-- Album cover
-- Album / EP title
-- Album price reference
-- Language
-- Primary + secondary genre
-- Track metadata
-- Additional artists and roles
-- Apple performer + producer credits
-- Final rights / spelling / store-review checklist
+1. Select your **masters folder**.
+2. Select your **artwork folder**.
 
-### Track metadata
+DistroPrep accepts up to **1,000 audio masters in one batch** and up to **1,000 JPG/JPEG covers** for matching.
 
-Each track can carry:
+Folder intake works alongside regular multi-file selection, so users can fall back to selecting files directly when a browser does not expose folder selection.
 
-- Song title
-- Featured artist, remixer, or additional primary artist
-- Version information
-- Existing ISRC reference
-- Original song / cover-song status
-- Songwriter / composer legal names
-- Original artist + title for cover songs
-- Explicit flag
-- Radio-edit flag
-- Instrumental flag
+### Supported audio intake
+
+```text
+WAV • FLAC • MP3 • M4A • AIFF • AIF • WMA
+```
+
+### Artwork intake
+
+```text
+JPG / JPEG
+minimum check: 1000 × 1000
+recommended target: 3000 × 3000
+square preferred
+```
+
+---
+
+# 🧬 Previous-release memory
+
+DistroPrep is built around a simple idea:
+
+> **If the artist, label, genre, credits, profile mappings, and release settings did not change, you should not have to type them again.**
+
+The 1,000 Song Mode automatically looks for metadata from your previous DistroPrep release in browser local storage.
+
+It can inherit:
+
+- artist / band name
+- record label
+- release date
+- services
+- language
+- primary genre
+- secondary genre
+- songwriter / composer legal names
+- producer credit
+- performer credit
+- Spotify artist mapping
+- Apple Music artist mapping
+- YouTube Music artist mapping
+- previously-released status
+- original release date
+- explicit flag
+- radio-edit flag
+- instrumental flag
 - Apple Digital Master flag
-- Preview start time
-- Track-price reference
+- preview-start reference
+- track-price reference
 
-### Bulk Singles Queue
-
-Select a stack of masters and a stack of covers. DistroPrep automatically pairs them by normalized filename.
+For a bulk-singles batch, the per-release differences are intentionally reduced to:
 
 ```text
-01 Neon Rain.wav
-Neon Rain Cover.jpg
-
-02 Cold Summer.flac
-Cold_Summer_artwork.jpg
+SONG TITLE
+AUDIO MASTER
+COVER ART
 ```
 
-Both pairs are recognized automatically.
+The song title is derived from the master filename and remains editable before export.
 
-The queue lets you prepare many personal-account singles while keeping each song/artwork pair visible and exportable.
+When you click **Save as previous release**, that template becomes the starting metadata for the next batch in the same browser.
 
 ---
 
-## 🖤 Built for the studio workflow
+# ✨ Smart artwork matching
+
+Naming 1,000 covers perfectly is not always realistic.
+
+DistroPrep now includes a **local intelligent matching engine** that tries to identify which artwork belongs to which master without sending your files to an external AI service.
+
+It combines multiple signals:
+
+- normalized song filenames
+- ignored track-number prefixes
+- ignored words such as `cover`, `artwork`, `final`, `master`, and `mix`
+- punctuation normalization
+- shared title tokens
+- fuzzy filename similarity
+- matching track numbers
+- folder-name identity
+- one-cover-per-song assignment
+
+Examples:
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│  DISTROPREP PERSONAL                                    │
-├─────────────────────────────────────────────────────────┤
-│  🎧 18 masters loaded                                   │
-│  🖼️ 18 covers matched                                   │
-│  ✅ artwork dimensions checked                          │
-│  ✅ filenames checked                                   │
-│  ✅ metadata packaged                                   │
-│                                                         │
-│  [ EXPORT JSON ] [ EXPORT CSV ] [ OPEN DISTROKID ↗ ]   │
-└─────────────────────────────────────────────────────────┘
+01 Neon Rain FINAL.wav
+Neon_Rain Cover.jpg
+→ exact/high-confidence match
 ```
 
-The UI is intentionally dark, high-contrast, and studio-friendly so release prep feels more like part of the music workflow and less like paperwork.
+```text
+Masters/Night Drive/master.wav
+Artwork/Night Drive/cover.jpg
+→ folder-identity match
+```
+
+```text
+Money Talk (Master).flac
+money-talk artwork.jpg
+→ strong semantic filename match
+```
+
+Every match receives a confidence score. Low-confidence results are sent to **Needs Review** instead of silently being treated as correct.
+
+You can manually change any cover using the searchable artwork picker.
+
+### Performance target
+
+The smart matcher has an automated test covering a **1,000 master / 1,000 cover batch**. Candidate indexing avoids doing a full expensive comparison of every possible pair when filenames already provide useful identity signals.
 
 ---
 
-## ✅ Current DistroKid-oriented checks
+# 🎚️ Release Builder
 
-DistroPrep currently checks or surfaces the following rules from DistroKid's public upload documentation:
+The original Release Builder is still available for singles, EPs, and albums where each track needs more individual metadata.
 
-### Audio
+It includes:
 
-Accepted extensions:
+- services
+- artist / band name
+- release date
+- original release date
+- previously released status
+- record label
+- album / EP title
+- language
+- primary + secondary genre
+- Spotify / Apple Music / YouTube Music profile mapping
+- performer and producer credits
+- song title
+- additional artists / featured artists
+- version information
+- existing ISRC reference
+- songwriter names
+- cover-song information
+- explicit / radio edit / instrumental flags
+- Apple Digital Master flag
+- preview start
+- track-price reference
 
-```text
-WAV • MP3 • M4A • FLAC • AIFF • WMA
-```
+The regular **Bulk Singles Queue** remains available for smaller batches. For large catalogs, use **1,000 Song Mode**.
 
-It checks:
+---
 
-- supported extension
+# 🧪 Local validation
+
+DistroPrep checks common release-prep issues before you open the distributor form.
+
+### Audio checks
+
+- supported file extension
 - 1 GB per-track maximum
-- invalid filename characters
-- album known-duration limit of 10 hours
-- average-duration warning for multi-track releases
-- lossy-source warning when MP3/M4A/WMA is selected
+- problematic filename characters
+- lossy-source warning for MP3/M4A/WMA
+- release duration checks in the standard Release Builder
 
-DistroKid notes that WAV or FLAC is preferred when a lossless master is available.
+### Artwork checks
 
-### Artwork
+- JPG/JPEG validation
+- readable image
+- minimum 1000×1000 dimensions
+- square-art warning
+- 3000×3000 recommendation
+- RGB reminder
 
-DistroPrep targets:
-
-```text
-JPG
-minimum: 1000 × 1000
-recommended: 3000 × 3000
-square artwork preferred
-RGB color mode required by DistroKid
-```
-
-The browser checks the file type and pixel dimensions. Because browser image APIs do not reliably expose every source color-profile detail, DistroPrep reminds you to confirm RGB color mode before final submission.
-
-Official references:
-
-- DistroKid upload-form guide: https://support.distrokid.com/hc/en-us/articles/4407879306643-Understanding-the-Upload-Form
-- Track-information guide: https://support.distrokid.com/hc/en-us/articles/39974262480019-Entering-Track-Information-on-the-Upload-Form
-- Audio formats: https://support.distrokid.com/hc/en-us/articles/360013647753-What-Audio-File-Formats-Can-I-Upload
-- Artwork requirements: https://support.distrokid.com/hc/en-us/articles/360013534334-What-Are-the-Requirements-for-Album-Artwork
+For a 1,000-song batch, matched artwork is dimension-checked with a limited-concurrency worker queue so the browser does not try to decode the entire catalog at once.
 
 ---
 
-## 🔒 Personal-account mode
+# 👀 Catalog review tools
 
-**Version 1 is intentionally for personal account workflows.**
+Large batches need visibility, not a wall of 1,000 rows.
+
+The new queue includes:
+
+- 100-release pagination
+- song/art filename search
+- **All / Matched / Needs Review / Unmatched** filters
+- match-confidence percentages
+- master validation status
+- artwork validation status
+- manual art reassignment
+- per-single JSON copy
+- batch JSON export
+- batch CSV export
+
+```text
+┌────┬─────────────────┬──────────────────┬──────────────────┬─────────┐
+│ #  │ SONG            │ MASTER           │ ART              │ MATCH   │
+├────┼─────────────────┼──────────────────┼──────────────────┼─────────┤
+│ 1  │ Neon Rain       │ Neon Rain.wav    │ Neon Rain.jpg    │ 100% ✅ │
+│ 2  │ Cold Summer     │ Cold Summer.wav  │ ColdSummer.jpg   │  93% ✅ │
+│ 3  │ Night Drive     │ master.wav       │ cover.jpg        │  78% 👀 │
+└────┴─────────────────┴──────────────────┴──────────────────┴─────────┘
+```
+
+---
+
+# 📦 Export formats
+
+## Batch JSON
+
+Creates a structured collection containing:
+
+- inherited release template
+- one manifest per single
+- master filename + relative folder path
+- artwork filename + relative folder path
+- match score + reason
+- image dimensions
+- validation output
+- title / credits / metadata
+
+## Batch CSV
+
+Creates one row per prepared single for catalog work in:
+
+- Excel
+- Numbers
+- Google Sheets
+- Airtable
+- catalog databases
+- future distributor adapters
+
+---
+
+# 🔒 Personal-account mode
+
+Version 1 remains deliberately scoped to **personal account workflows**.
 
 DistroPrep does **not**:
 
-- ask for your DistroKid username or password
-- save DistroKid session cookies
-- impersonate you on DistroKid
-- auto-submit releases through the DistroKid website
-- bypass DistroKid permissions, account limits, or paid-plan features
+- request your DistroKid password
+- store DistroKid cookies
+- impersonate your account
+- bypass distributor permissions
+- bypass paid-plan limits
+- auto-submit the DistroKid website
 
-It prepares the files and metadata locally and then sends you to the official upload page:
+It prepares the catalog, then hands you off to the official DistroKid upload page for review and submission.
 
-https://distrokid.com/new/
-
-This keeps the first version useful without turning your distributor login into an automation credential.
-
----
-
-## 🛡️ Privacy first
-
-Your selected audio and artwork stay in the browser session. The project has no backend, database, analytics SDK, or account system.
-
-Metadata drafts use your browser's local storage. File objects themselves are **not** persisted there.
-
-Exported manifests contain filenames and metadata — not copies of your audio masters.
+This project is **not affiliated with, endorsed by, or sponsored by DistroKid**.
 
 ---
 
-## 🚀 Run it locally
+# 🛡️ Privacy-first architecture
 
-No package manager or framework is required.
+Your music and cover files remain local to the browser session.
 
-Clone the repository and serve the folder with any static web server, or simply use the project through a GitHub Pages/static deployment.
+There is currently:
 
-For Python users:
+- no DistroPrep backend
+- no DistroPrep account database
+- no upload server
+- no analytics SDK required by the app
+- no cloud AI processing of your songs or artwork
+
+Browser local storage is used for reusable **metadata text only**. Audio and artwork file objects are not saved there.
+
+---
+
+# 🚀 Run DistroPrep
+
+DistroPrep is plain HTML/CSS/JavaScript and does not require a framework or package install.
 
 ```bash
 python3 -m http.server 8080
@@ -201,83 +340,97 @@ Then open:
 http://localhost:8080
 ```
 
-Because DistroPrep is plain HTML/CSS/JavaScript, it can be hosted on GitHub Pages, Netlify, Vercel static hosting, Cloudflare Pages, or nearly any web server.
+Main Release Builder:
 
----
-
-## 📦 Export formats
-
-### JSON manifest
-
-Keeps detailed release structure for archiving, future tools, and later automation adapters.
-
-### CSV manifest
-
-Creates a catalog-friendly row-per-track file that can be opened in Excel, Numbers, Google Sheets, Airtable, or catalog-management software.
-
----
-
-## 🧪 Development
-
-No dependency install is needed for the validator test suite.
-
-```bash
-node --test tests/validator.test.mjs
-node --check app.js
+```text
+http://localhost:8080/index.html
 ```
 
-The GitHub Actions workflow runs these checks on pushes and pull requests.
+1,000 Song Mode:
+
+```text
+http://localhost:8080/bulk1000.html
+```
+
+It can also be hosted using GitHub Pages, Netlify, Vercel static hosting, Cloudflare Pages, or another static web host.
 
 ---
 
-## 🗺️ Roadmap
+# 🧪 Development & tests
 
-### v1 — Personal Release Prep ✅
+No dependency install is required for the core tests.
 
-- [x] Single / EP / album builder
-- [x] Bulk master intake
-- [x] Bulk cover-art matching
-- [x] DistroKid-oriented metadata structure
-- [x] Artwork validation
+```bash
+node --test tests/*.test.mjs
+node --check app.js
+node --check bulk1000.mjs
+node --check smart-match.mjs
+node --check release-template.mjs
+```
+
+GitHub Actions runs the suite on pushes and pull requests.
+
+Current automated coverage includes:
+
+- audio/art validation
+- exact artwork matching
+- fuzzy matching
+- folder-identity matching
+- one-artwork-per-song assignment
+- previous-release metadata conversion
+- metadata inheritance across multiple singles
+- 1,000-item match batch
+
+---
+
+# 🗺️ Roadmap
+
+### v1 — Personal release preparation ✅
+
+- [x] Single / EP / album Release Builder
+- [x] Bulk Singles Queue
+- [x] **1,000-song folder intake**
+- [x] **1,000-cover folder intake**
+- [x] **Previous-release metadata inheritance**
+- [x] **Smart artwork matching**
+- [x] Match confidence + review queue
+- [x] Manual artwork reassignment
 - [x] Audio validation
+- [x] Artwork dimension validation
 - [x] JSON export
 - [x] CSV export
-- [x] Local metadata drafts
+- [x] Local metadata memory
 - [x] Official DistroKid handoff
 
 ### Later
 
-- [ ] Catalog templates
 - [ ] Saved artist profiles
-- [ ] Credits library
-- [ ] Release history
+- [ ] Multiple reusable metadata presets
+- [ ] Release-history ledger
 - [ ] UPC / ISRC catalog ledger
-- [ ] Lyrics packages
-- [ ] Multi-distributor adapters
-- [ ] Official API integrations where a distributor provides and permits them
+- [ ] Lyrics package manager
+- [ ] Credits library
+- [ ] Duplicate-master detection
+- [ ] Audio fingerprint assistance
+- [ ] Multi-distributor manifests
+- [ ] Official distributor API adapters where an API exists and automation is permitted
 
 ---
 
-## 🤝 For musicians, by independent builders
+# 🤝 Built for musicians with real catalogs
 
-If you are an artist, producer, label owner, engineer, or catalog manager and you see a piece of release admin that should be easier, open an issue.
+If you are sitting on 50 songs, 300 songs, or 1,000 songs, release administration should scale with the catalog.
 
-Good feature requests describe the **actual studio/release workflow** rather than just the button you want added.
-
----
-
-## ⚖️ Project notice
-
-DistroPrep is an independent open-source project and is **not affiliated with, endorsed by, or sponsored by DistroKid**. DistroKid and related marks belong to their respective owners. DistroKid's upload requirements and interface may change; always review the official upload form before final submission.
-
-Use DistroPrep only with audio, artwork, and metadata you have the rights or permission to distribute.
+Open an issue with the workflow that wastes your time and DistroPrep can keep growing around real independent-artist release needs.
 
 ---
 
 <div align="center">
 
-### **Make the record. Prep the release. Keep moving.** 🎚️🔥
+## **MAKE THE RECORD. DROP THE FOLDER. KEEP MOVING.** 🎚️⚡🔥
 
-MIT Licensed • Personal-account mode • Local-first
+**DistroPrep Personal**
+
+Local-first • Catalog-ready • MIT Licensed
 
 </div>
