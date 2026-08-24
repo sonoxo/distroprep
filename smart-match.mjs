@@ -1,29 +1,27 @@
 import { normalizeStem, stemOf } from './validator.mjs';
 
 const STOP_WORDS = new Set([
-  'cover','art','artwork','album','single','front','final','master','masters','mix','mixed','version','v1','v2','v3',
-  'official','audio','image','img','jpg','jpeg','wav','flac','mp3','m4a','aiff','aif','wma','release','song','track'
+  'cover','art','artwork','album','single','front','final','master','masters','mastered','mix','mixed','version','v1','v2','v3',
+  'official','audio','image','img','jpg','jpeg','png','wav','flac','mp3','m4a','aiff','aif','wma','release','song','track'
 ]);
 
 function filePath(fileLike = {}) {
-  return String(fileLike.webkitRelativePath || fileLike.path || fileLike.name || '');
+  return String(fileLike._distroprepPath || fileLike.webkitRelativePath || fileLike.path || fileLike.name || '');
 }
 
 function cleanWords(value = '') {
   return String(value)
     .toLowerCase()
     .replace(/\.[a-z0-9]{2,5}$/i, '')
-    .replace(/\b(?:cover|art|artwork|album[\s_-]*art|front[\s_-]*cover|master(?:ed)?|final|mix(?:ed)?|official)\b/gi, ' ')
+    .replace(/\b(?:cover|art|artwork|album[\s_-]*art|front[\s_-]*cover|master(?:ed)?|final|mix(?:ed)?|official|clean|explicit|radio[\s_-]*edit)\b/gi, ' ')
     .replace(/^\s*\d{1,4}[\s._-]+/, '')
     .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
 function significantTokens(value = '') {
-  return cleanWords(value)
-    .split(/\s+/)
-    .filter(Boolean)
-    .filter((token) => !STOP_WORDS.has(token));
+  return cleanWords(value).split(/\s+/).filter(Boolean).filter((token) => !STOP_WORDS.has(token));
 }
 
 function pathTokens(fileLike = {}) {
@@ -62,7 +60,7 @@ function diceBigrams(a = '', b = '') {
 }
 
 function tokenScore(a = [], b = []) {
-  if (!a.length || !b.length) return 0;
+  if (!a.length || !b.length) return { score: 0, intersection: 0, containment: 0 };
   const A = new Set(a);
   const B = new Set(b);
   let intersection = 0;
@@ -70,20 +68,20 @@ function tokenScore(a = [], b = []) {
   const union = new Set([...A, ...B]).size;
   const jaccard = union ? intersection / union : 0;
   const containment = intersection / Math.max(1, Math.min(A.size, B.size));
-  return (jaccard * 0.55) + (containment * 0.45);
+  return { score: (jaccard * 0.45) + (containment * 0.55), intersection, containment };
 }
 
 export function fingerprint(fileLike = {}) {
   const name = String(fileLike.name || '');
   const stem = normalizeStem(name);
   const nameTokens = significantTokens(stem);
-  const folders = pathTokens(fileLike);
+  const folderTokens = pathTokens(fileLike);
   return {
     stem,
     clean: cleanWords(stem),
     nameTokens,
-    folderTokens: folders,
-    allTokens: [...new Set([...nameTokens, ...folders])],
+    folderTokens,
+    allTokens: [...new Set([...nameTokens, ...folderTokens])],
     trackNumber: numericPrefix(name),
   };
 }
@@ -91,42 +89,38 @@ export function fingerprint(fileLike = {}) {
 export function pairScore(audio, artwork) {
   const a = fingerprint(audio);
   const b = fingerprint(artwork);
-  if (!a.clean || !b.clean) {
-    const folderOnly = tokenScore(a.folderTokens, b.folderTokens);
-    const numberOnly = a.trackNumber !== null && a.trackNumber === b.trackNumber ? 1 : 0;
-    const score = Math.min(1, (folderOnly * 0.82) + (numberOnly * 0.08));
-    if (score >= 0.58) return { score, reason: folderOnly >= 0.99 ? 'Matching release folder' : 'Folder-name similarity' };
-    return { score, reason: 'No usable filename identity' };
-  }
-  if (a.clean === b.clean) return { score: 1, reason: 'Exact normalized filename' };
+  if ((!a.clean && !a.folderTokens.length) || (!b.clean && !b.folderTokens.length)) return { score: 0, reason: 'No usable title or folder metadata' };
+  if (a.clean && b.clean && a.clean === b.clean) return { score: 1, reason: 'Exact song-title filename match' };
 
-  const nameTokens = tokenScore(a.nameTokens, b.nameTokens);
-  const allTokens = tokenScore(a.allTokens, b.allTokens);
-  const fuzzy = diceBigrams(a.clean, b.clean);
+  const title = tokenScore(a.nameTokens, b.nameTokens);
+  const all = tokenScore(a.allTokens, b.allTokens);
   const folder = tokenScore(a.folderTokens, b.folderTokens);
+  const fuzzy = diceBigrams(a.clean, b.clean);
   const contains = a.clean.includes(b.clean) || b.clean.includes(a.clean) ? 1 : 0;
   const numberMatch = a.trackNumber !== null && a.trackNumber === b.trackNumber ? 1 : 0;
 
-  let score = (nameTokens * 0.42) + (allTokens * 0.18) + (fuzzy * 0.22) + (folder * 0.08) + (contains * 0.07) + (numberMatch * 0.03);
-  if (nameTokens === 1 && a.nameTokens.length && b.nameTokens.length) score = Math.max(score, 0.93);
-  if (folder === 1 && a.folderTokens.length && b.folderTokens.length && (a.nameTokens.length <= 1 || b.nameTokens.length <= 1)) score = Math.max(score, 0.78);
-  score = Math.max(0, Math.min(1, score));
+  let score = (title.score * 0.62) + (fuzzy * 0.18) + (all.score * 0.08) + (folder.score * 0.07) + (contains * 0.03) + (numberMatch * 0.02);
+  if (title.containment === 1 && title.intersection > 0) score = Math.max(score, 0.91);
+  if (contains && title.intersection > 0) score = Math.max(score, 0.86);
+  if (folder.containment === 1 && a.folderTokens.length && b.folderTokens.length && (!a.nameTokens.length || !b.nameTokens.length || a.clean === 'master' || b.clean === 'cover')) score = Math.max(score, 0.78);
+  if (title.intersection === 0 && folder.intersection === 0 && !(numberMatch && fuzzy >= 0.55)) score = Math.min(score, 0.49);
 
-  const reason = nameTokens >= 0.99 ? 'Same title tokens'
-    : contains ? 'Filename contains title'
-      : folder >= 0.99 ? 'Matching release folder'
-        : numberMatch && allTokens > 0.4 ? 'Track number + filename similarity'
-          : allTokens > 0.55 ? 'Strong token similarity'
-            : fuzzy > 0.65 ? 'Fuzzy filename similarity'
-              : 'Weak filename similarity';
+  score = Math.max(0, Math.min(1, score));
+  const reason = title.containment === 1 && title.intersection > 0 ? 'Same song-title words'
+    : contains && title.intersection > 0 ? 'Artwork filename contains the song title'
+      : folder.containment === 1 && a.folderTokens.length ? 'Matching song/release folder'
+        : title.intersection > 0 && fuzzy >= 0.6 ? 'Title words + strong filename similarity'
+          : title.intersection > 0 ? 'Shared song-title metadata'
+            : numberMatch && fuzzy >= 0.55 ? 'Track number + filename similarity'
+              : 'Weak title similarity — review manually';
   return { score, reason };
 }
 
 export function confidenceForScore(score = 0) {
   if (score >= 0.97) return 'exact';
-  if (score >= 0.85) return 'high';
-  if (score >= 0.70) return 'medium';
-  if (score >= 0.58) return 'review';
+  if (score >= 0.88) return 'high';
+  if (score >= 0.74) return 'medium';
+  if (score >= 0.62) return 'review';
   return 'unmatched';
 }
 
@@ -135,7 +129,6 @@ function candidateIndex(artFiles = []) {
   const tokenMap = new Map();
   const numberMap = new Map();
   const fingerprints = artFiles.map((file, index) => ({ file, index, fp: fingerprint(file) }));
-
   for (const item of fingerprints) {
     if (item.fp.clean) {
       if (!exact.has(item.fp.clean)) exact.set(item.fp.clean, []);
@@ -164,28 +157,23 @@ function candidateIds(audio, index, artCount) {
     const bucket = index.numberMap.get(fp.trackNumber);
     if (bucket) for (const id of bucket) ids.add(id);
   }
-  if (!ids.size && artCount <= 150) {
-    for (let i = 0; i < artCount; i += 1) ids.add(i);
-  }
+  if (!ids.size && artCount <= 150) for (let i = 0; i < artCount; i += 1) ids.add(i);
   return ids;
 }
 
-export function smartMatchBatch(audioFiles = [], artFiles = [], { threshold = 0.58, topCandidates = 4 } = {}) {
+export function smartMatchBatch(audioFiles = [], artFiles = [], { threshold = 0.62, topCandidates = 5 } = {}) {
   if (!audioFiles.length) return [];
   if (audioFiles.length === 1 && artFiles.length === 1) {
     const pair = pairScore(audioFiles[0], artFiles[0]);
-    return [{
-      audio: audioFiles[0], artwork: artFiles[0], score: Math.max(pair.score, 0.75), confidence: pair.score >= 0.97 ? 'exact' : 'high',
-      reason: pair.score >= 0.97 ? pair.reason : 'Only artwork supplied for this single', candidates: [{ artwork: artFiles[0], score: Math.max(pair.score, 0.75), reason: pair.reason }], matched: true,
-    }];
+    const score = Math.max(pair.score, 0.75);
+    return [{ audio: audioFiles[0], artwork: artFiles[0], score, confidence: confidenceForScore(score), reason: pair.reason, candidates: [{ artwork: artFiles[0], score, reason: pair.reason }], matched: true }];
   }
 
   const index = candidateIndex(artFiles);
   const proposals = [];
   const perAudio = audioFiles.map((audio, audioIndex) => {
     const scored = [];
-    const ids = candidateIds(audio, index, artFiles.length);
-    for (const artIndex of ids) {
+    for (const artIndex of candidateIds(audio, index, artFiles.length)) {
       const artwork = artFiles[artIndex];
       const result = pairScore(audio, artwork);
       scored.push({ audioIndex, artIndex, artwork, score: result.score, reason: result.reason });
@@ -215,7 +203,7 @@ export function smartMatchBatch(audioFiles = [], artFiles = [], { threshold = 0.
       artwork: assigned?.artwork || null,
       score,
       confidence: assigned ? confidenceForScore(score) : 'unmatched',
-      reason: assigned?.reason || (top[0] ? `Best suggestion ${Math.round(top[0].score * 100)}% — needs review` : 'No likely artwork candidate'),
+      reason: assigned?.reason || (top[0] ? `Best title match ${Math.round(top[0].score * 100)}% — review manually` : 'No artwork filename shares enough song-title metadata'),
       candidates: top.map(({ artwork, score: candidateScore, reason }) => ({ artwork, score: candidateScore, reason })),
       matched: Boolean(assigned),
     };
