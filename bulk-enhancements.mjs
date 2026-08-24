@@ -1,7 +1,10 @@
+import './handoff.mjs';
+
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 const dropped = { audio: [], art: [] };
+const synthetic = new WeakSet();
 
 function key(file) {
   return `${file._distroprepPath || file.webkitRelativePath || file.name}::${file.size || 0}::${file.lastModified || 0}`;
@@ -56,16 +59,10 @@ async function filesFromDrop(dataTransfer) {
 function sendFiles(files, targetInput) {
   const transfer = new DataTransfer();
   files.forEach((file) => transfer.items.add(file));
+  synthetic.add(targetInput);
   targetInput.files = transfer.files;
   targetInput.dispatchEvent(new Event('change', { bubbles: true }));
-}
-
-function syncPicker(selector, kind) {
-  const input = $(selector);
-  if (!input) return;
-  input.addEventListener('change', () => {
-    dropped[kind] = unique([...(input.files || [])]).slice(0, 1000);
-  });
+  queueMicrotask(() => synthetic.delete(targetInput));
 }
 
 function wireDropZone(zoneSelector, targetSelector, kind) {
@@ -79,13 +76,16 @@ function wireDropZone(zoneSelector, targetSelector, kind) {
   zone.addEventListener('dragover', (event) => { event.preventDefault(); if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy'; setActive(true); });
   zone.addEventListener('dragleave', () => { depth = Math.max(0, depth - 1); if (!depth) setActive(false); });
   zone.addEventListener('drop', async (event) => {
-    event.preventDefault(); depth = 0; setActive(false); zone.classList.add('is-processing');
+    event.preventDefault();
+    depth = 0;
+    setActive(false);
+    zone.classList.add('is-processing');
     try {
       const files = await filesFromDrop(event.dataTransfer);
       dropped[kind] = unique([...dropped[kind], ...files]).slice(0, 1000);
       sendFiles(dropped[kind], target);
-      const message = kind === 'audio' ? $('#audio-message') : $('#art-message');
-      if (message) message.dataset.dragDrop = 'true';
+      const status = $('#processing-status');
+      if (status) status.textContent = `${dropped[kind].length} ${kind === 'audio' ? 'master' : 'artwork'} file${dropped[kind].length === 1 ? '' : 's'} staged from drag-and-drop.`;
     } catch (error) {
       console.error('DistroPrep folder drop failed', error);
       const status = $('#processing-status');
@@ -96,11 +96,39 @@ function wireDropZone(zoneSelector, targetSelector, kind) {
   });
 }
 
+function wireAdditiveFilePicker(inputSelector, kind) {
+  const input = $(inputSelector);
+  if (!input) return;
+  input.addEventListener('change', (event) => {
+    if (synthetic.has(input)) return;
+    const incoming = [...event.target.files];
+    if (!incoming.length) return;
+    const merged = unique([...dropped[kind], ...incoming]).slice(0, 1000);
+    dropped[kind] = merged;
+    if (merged.length !== incoming.length) {
+      event.stopImmediatePropagation();
+      sendFiles(merged, input);
+    }
+  }, true);
+}
+
+function wireFolderPicker(inputSelector, kind) {
+  const input = $(inputSelector);
+  if (!input) return;
+  input.addEventListener('change', (event) => {
+    if (synthetic.has(input)) return;
+    dropped[kind] = unique([...event.target.files]).slice(0, 1000);
+  }, true);
+}
+
 function wireDatePickers() {
   $$('input[type="date"]').forEach((input) => {
     input.addEventListener('click', () => { try { input.showPicker?.(); } catch {} });
     input.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') { try { input.showPicker?.(); } catch {} }
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        try { input.showPicker?.(); } catch { input.click(); }
+      }
     });
   });
   $$('[data-date-target]').forEach((button) => {
@@ -113,11 +141,15 @@ function wireDatePickers() {
   });
 }
 
-syncPicker('#audio-folder-input', 'audio');
-syncPicker('#audio-files-input', 'audio');
-syncPicker('#art-folder-input', 'art');
-syncPicker('#art-files-input', 'art');
 wireDropZone('#audio-drop-zone', '#audio-files-input', 'audio');
 wireDropZone('#art-drop-zone', '#art-files-input', 'art');
+wireAdditiveFilePicker('#audio-files-input', 'audio');
+wireAdditiveFilePicker('#art-files-input', 'art');
+wireFolderPicker('#audio-folder-input', 'audio');
+wireFolderPicker('#art-folder-input', 'art');
 wireDatePickers();
-$('#clear-batch')?.addEventListener('click', () => { dropped.audio = []; dropped.art = []; });
+
+$('#clear-batch')?.addEventListener('click', () => {
+  dropped.audio = [];
+  dropped.art = [];
+});
