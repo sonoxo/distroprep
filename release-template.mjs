@@ -78,7 +78,7 @@ export function buildSingleManifest(template, item, index = 0) {
     numberOfSongs: 1,
     artwork: item.artwork ? {
       fileName: item.artwork.name,
-      relativePath: item.artwork.webkitRelativePath || '',
+      relativePath: item.artwork._distroprepPath || item.artwork.webkitRelativePath || '',
       width: item.artWidth ?? null,
       height: item.artHeight ?? null,
       validation: item.artValidation ?? null,
@@ -89,7 +89,7 @@ export function buildSingleManifest(template, item, index = 0) {
       batchIndex: index + 1,
       title,
       fileName: item.audio?.name || '',
-      relativePath: item.audio?.webkitRelativePath || '',
+      relativePath: item.audio?._distroprepPath || item.audio?.webkitRelativePath || '',
       fileSizeBytes: item.audio?.size || 0,
       audioValidation: item.audioValidation ?? null,
       songwriterType: 'original',
