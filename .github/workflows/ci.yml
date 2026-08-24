@@ -1,0 +1,28 @@
+name: DistroPrep CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate static app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run validator tests
+        run: node --test tests/validator.test.mjs
+      - name: Parse application JavaScript
+        run: node --check app.js
+      - name: Verify required files
+        run: test -f index.html && test -f styles.css && test -f validator.mjs && test -f README.md
