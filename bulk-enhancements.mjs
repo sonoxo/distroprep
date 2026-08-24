@@ -61,6 +61,10 @@ function sendFiles(files, targetInput) {
   files.forEach((file) => transfer.items.add(file));
   synthetic.add(targetInput);
   targetInput.files = transfer.files;
+  [...targetInput.files].forEach((copy, index) => {
+    const source = files[index];
+    markPath(copy, source?._distroprepPath || source?.webkitRelativePath || '');
+  });
   targetInput.dispatchEvent(new Event('change', { bubbles: true }));
   queueMicrotask(() => synthetic.delete(targetInput));
 }
