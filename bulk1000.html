@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0b12" />
+  <meta name="description" content="DistroPrep 1000 Song Mode — load up to 1000 masters and covers, inherit previous-release metadata, and smart-match artwork locally." />
+  <title>DistroPrep • 1,000 Song Mode</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./bulk1000.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <a class="brand" href="./index.html" aria-label="DistroPrep home"><span class="brand-mark">DP</span><span><strong>DistroPrep</strong><small>1,000 Song Mode</small></span></a>
+    <nav>
+      <a class="ghost-link" href="./index.html">Release Builder</a>
+      <a class="ghost-link active-link" href="./bulk1000.html">1,000 Song Mode</a>
+      <a class="ghost-link" href="https://distrokid.com/new/" target="_blank" rel="noopener noreferrer">Open DistroKid ↗</a>
+    </nav>
+  </header>
+
+  <main class="shell batch-shell">
+    <section class="hero batch-hero">
+      <div>
+        <span class="eyebrow">PERSONAL CATALOG MODE • LOCAL-FIRST</span>
+        <h1>Drop the whole folder.<br><span>Prep up to 1,000 singles.</span></h1>
+        <p>Load masters and cover art in one shot. DistroPrep inherits the metadata from your previous release, changes the song title and artwork for each single, and smart-matches covers to audio by filename and folder identity.</p>
+        <div class="hero-actions">
+          <button class="primary" id="jump-intake">Load catalog</button>
+          <button class="secondary" id="load-previous">Reload previous release metadata</button>
+        </div>
+      </div>
+      <aside class="hero-card batch-meter">
+        <div class="meter-row"><span>🎵 Capacity</span><b>1,000 masters per batch</b></div>
+        <div class="meter-row"><span>🖼️ Matching</span><b>Smart local filename + folder matcher</b></div>
+        <div class="meter-row"><span>🧬 Metadata</span><b>Previous release inherited automatically</b></div>
+        <div class="meter-row"><span>🔒 Privacy</span><b>Audio + art stay in your browser</b></div>
+      </aside>
+    </section>
+
+    <section class="notice batch-notice">
+      <strong>What changes per single:</strong> song title, audio file, and matched artwork. Your artist, label, genres, credits, profile mappings, flags, and other saved release metadata are inherited from the previous release template unless you edit the template below.
+    </section>
+
+    <section class="batch-stats" aria-label="Batch status">
+      <article><span>Masters</span><strong id="stat-audio">0</strong><small>/ 1000</small></article>
+      <article><span>Artwork</span><strong id="stat-art">0</strong><small>JPG/JPEG</small></article>
+      <article><span>Matched</span><strong id="stat-matched">0</strong><small id="stat-match-rate">0%</small></article>
+      <article><span>Needs review</span><strong id="stat-review">0</strong><small>match or file check</small></article>
+    </section>
+
+    <section class="workspace batch-workspace">
+      <article class="panel" id="intake">
+        <div class="panel-title-row">
+          <div><span class="eyebrow">01 • INTAKE</span><h2>Load folders</h2><p>Folder pickers are fastest in Chrome, Edge, Brave, and Safari. Multi-file pickers are included as a fallback.</p></div>
+          <button class="secondary" id="clear-batch">Clear batch</button>
+        </div>
+
+        <div class="grid two batch-upload-grid">
+          <section class="upload-panel compact-upload">
+            <h3>🎵 Masters folder</h3>
+            <label class="dropzone folder-zone">
+              <input id="audio-folder-input" type="file" webkitdirectory directory multiple />
+              <span class="drop-icon">📁</span><strong>Select master folder</strong><small>WAV • FLAC • MP3 • M4A • AIFF • WMA</small>
+            </label>
+            <label class="file-button wide-file-button">Or select audio files<input id="audio-files-input" type="file" multiple accept="audio/*,.wav,.flac,.mp3,.m4a,.aiff,.aif,.wma" /></label>
+            <p class="intake-message" id="audio-message">No masters loaded.</p>
+          </section>
+
+          <section class="upload-panel compact-upload">
+            <h3>🖼️ Artwork folder</h3>
+            <label class="dropzone folder-zone">
+              <input id="art-folder-input" type="file" webkitdirectory directory multiple />
+              <span class="drop-icon">📁</span><strong>Select artwork folder</strong><small>JPG / JPEG • 3000×3000 target</small>
+            </label>
+            <label class="file-button wide-file-button">Or select artwork files<input id="art-files-input" type="file" multiple accept="image/jpeg,.jpg,.jpeg" /></label>
+            <p class="intake-message" id="art-message">No artwork loaded.</p>
+          </section>
+        </div>
+
+        <div class="batch-toolbar">
+          <button class="primary" id="smart-match">✨ Smart-match all artwork</button>
+          <span id="processing-status" class="muted">Waiting for folders.</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-title-row">
+          <div><span class="eyebrow">02 • INHERIT</span><h2>Previous release metadata</h2><p id="template-source">No previous release template found yet.</p></div>
+          <div class="template-actions"><button class="secondary" id="save-template">Save as previous release</button><span class="status-chip" id="template-status">Template unlocked</span></div>
+        </div>
+
+        <div class="form-grid batch-meta-grid">
+          <label class="span-2">Artist / band name <input data-template="artistName" placeholder="Your artist name" /></label>
+          <label>Record label <input data-template="recordLabel" /></label>
+          <label>Release date <input data-template="releaseDate" type="date" /></label>
+          <label>Language <input data-template="language" value="English" /></label>
+          <label>Primary genre <input data-template="primaryGenre" /></label>
+          <label>Secondary genre <input data-template="secondaryGenre" /></label>
+          <label>Services <input data-template="services" value="All available services" /></label>
+          <label>Previously released? <select data-template="previouslyReleased"><option value="false">No</option><option value="true">Yes</option></select></label>
+          <label>Original release date <input data-template="originalReleaseDate" type="date" /></label>
+          <label>Album / track price reference <input data-template="albumPrice" /></label>
+          <label class="span-2">Songwriter / composer legal name(s) <input data-template="songwriters" placeholder="Inherited for every single" /></label>
+          <label>Producer credit <input data-template="producer" /></label>
+          <label>Performer credit <input data-template="performer" /></label>
+          <label class="span-2">Spotify artist URI / URL <input data-template="artistMapping.spotify" /></label>
+          <label class="span-2">Apple Music artist URL <input data-template="artistMapping.appleMusic" /></label>
+          <label class="span-2">YouTube Music artist URL <input data-template="artistMapping.youtubeMusic" /></label>
+          <label>Explicit lyrics? <select data-template="explicit"><option value="no">No</option><option value="yes">Yes</option></select></label>
+          <label>Radio edit? <select data-template="radioEdit"><option value="no">No</option><option value="yes">Yes</option></select></label>
+          <label>Instrumental? <select data-template="instrumental"><option value="no">No</option><option value="yes">Yes</option></select></label>
+          <label>Apple Digital Master? <select data-template="appleDigitalMaster"><option value="no">No</option><option value="yes">Yes</option></select></label>
+          <label>Preview start <input data-template="previewStart" placeholder="e.g. 0:42" /></label>
+          <label>Track price <select data-template="trackPrice"><option value="">Default</option><option>$0.69</option><option>$0.99</option><option>$1.29</option></select></label>
+        </div>
+      </article>
+
+      <article class="panel queue-panel">
+        <div class="panel-title-row queue-heading">
+          <div><span class="eyebrow">03 • MATCH</span><h2>Prepared singles queue</h2><p>Only title and artwork can vary per row. Everything else inherits from the previous-release template above.</p></div>
+          <div class="queue-export-actions">
+            <button class="secondary" id="export-csv">Export CSV</button>
+            <button class="primary" id="export-json">Export all JSON</button>
+          </div>
+        </div>
+
+        <div class="queue-controls">
+          <input id="queue-search" type="search" placeholder="Search song or artwork filename…" />
+          <select id="queue-filter" aria-label="Queue filter">
+            <option value="all">All releases</option>
+            <option value="matched">Matched</option>
+            <option value="review">Needs review</option>
+            <option value="unmatched">Unmatched</option>
+          </select>
+          <span class="muted" id="queue-count">0 releases</span>
+        </div>
+
+        <div class="queue-table-wrap">
+          <table class="queue-table">
+            <thead><tr><th>#</th><th>Song title</th><th>Master</th><th>Matched artwork</th><th>Match</th><th>Checks</th><th></th></tr></thead>
+            <tbody id="queue-body"><tr><td colspan="7" class="queue-empty">Load master and artwork folders to build the queue.</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button class="secondary" id="page-prev">← Previous</button>
+          <span id="page-label">Page 1</span>
+          <button class="secondary" id="page-next">Next →</button>
+        </div>
+      </article>
+
+      <article class="panel final-panel">
+        <div><span class="eyebrow">04 • HANDOFF</span><h2>Ready for personal-account upload</h2><p>DistroPrep prepares and exports the batch locally. You still review and submit releases through your own DistroKid account.</p></div>
+        <a class="primary button-link" href="https://distrokid.com/new/" target="_blank" rel="noopener noreferrer">Open official DistroKid upload ↗</a>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="art-dialog" class="art-dialog">
+    <form method="dialog" class="art-dialog-card">
+      <div class="panel-title-row"><div><h3>Choose artwork</h3><p id="art-dialog-song">Manual match</p></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+      <input id="art-dialog-search" type="search" placeholder="Search artwork filenames…" autofocus />
+      <div id="art-dialog-list" class="art-dialog-list"></div>
+    </form>
+  </dialog>
+
+  <footer><strong>DistroPrep Personal</strong><span>1,000-song catalog prep • Previous-release metadata • Local smart matching</span><a href="https://github.com/sonoxo/distroprep" target="_blank" rel="noopener noreferrer">GitHub ↗</a></footer>
+  <script type="module" src="./bulk1000.mjs"></script>
+</body>
+</html>
